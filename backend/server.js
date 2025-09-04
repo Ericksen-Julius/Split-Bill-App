@@ -1,22 +1,24 @@
-const express = require('express');
-const mongoose = require('mongoose');
-require('dotenv').config();
+import express from "express";
+import mongoose from "mongoose";
+import dotenv from "dotenv";
+
+import authRoutes from "./routes/auth.routes.js";
+
+dotenv.config();
 
 const app = express();
 app.use(express.json());
 
-mongoose.connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-})
-    .then(() => console.log('✅ Connected to MongoDB (local)'))
-    .catch(err => console.error('❌ MongoDB connection error:', err));
+// DB connect
+mongoose.connect(process.env.MONGO_URI)
+    .then(() => console.log("✅ MongoDB connected"))
+    .catch(err => console.error("❌ MongoDB error:", err));
 
-app.get('/', (req, res) => {
-    res.send('Hello World! MongoDB Local connected 🚀');
-});
+// Routes
+app.use("/api/auth", authRoutes);
 
+app.get("/", (req, res) => res.send("API OK"));
+
+// Start
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`✅ Server running on http://localhost:${PORT}`);
-});
+app.listen(PORT, () => console.log(`✅ Server running http://localhost:${PORT}`));
